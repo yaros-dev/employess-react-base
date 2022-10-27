@@ -2,31 +2,35 @@ import './employees-list-item.css'
 import { Component } from 'react';
 
 class EmployeesListItem extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            increase: false
-        }
+
+    state = {
+        increase: false,
+        isStar: false
     }
 
     onIncrease = () => {
-        this.setState(({ increase }) => ({
-            increase: !increase
-        }))
+        this.setState({
+            increase: !this.state.increase
+        })  
     }
 
+    onStar = () => {
+        this.setState({
+            isStar: !this.state.isStar
+        })
+    }
+
+
     render() {
+         
         const { name, salary } = this.props;
-        const { increase } = this.state;
+        const { increase, isStar } = this.state;
 
-        let classNames = 'list-group-item d-flex justify-content-between';
-        if (increase) {
-            classNames += ' increase';
-        }
-
+        const classNames = `list-group-item d-flex justify-content-between ${increase && 'increase'} ${isStar && 'like'} `; 
+  
         return (
-            <li className={classNames}>
-                <span className="list-group-item-label">{name}</span>
+            <li className={classNames} >
+                <span className='list-group-item-label' onClick={this.onStar}>{name}</span>
                 <input type="text" className="list-group-item-input" defaultValue={salary + `$`} />
                 <div className='d-flex justify-content-center align-items-center'>
                     <button type="button"
