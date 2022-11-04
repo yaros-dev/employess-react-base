@@ -4,7 +4,7 @@ import SearchPanel from '../search-panel/search-panel';
 import AppFilter from '../app-filter/app-filter';
 import EmployeesList from '../employees-list/employees-list';
 import EmployeesAddForm from '../employees-add-form/employees-add-form';
-import './app.css';
+import './app.css'; 
 
 
 class App extends Component {
@@ -12,10 +12,12 @@ class App extends Component {
         super(props);
         this.state = {
             data: [
-                { name: 'Jesse P.', salary: 1200, increase: true, id: 1 },
-                { name: 'Walter W.', salary: 5000, increase: false, id: 2 },
-                { name: 'Saul G.', salary: 7200, increase: false, id: 3 }
-            ]
+                { name: 'Jesse P.', salary: 900, increase: true, rise: true, id: 1 },
+                { name: 'Walter W.', salary: 1100, increase: false, rise: true, id: 2 },
+                { name: 'Saul G.', salary: 600, increase: false, rise: false, id: 3 }
+            ],
+            term: '',
+            filter: ''
         }
     }
     
@@ -33,6 +35,7 @@ class App extends Component {
             name,
             salary,
             increase: false,
+            rise: false,
             id: +Math.floor(Math.random() * 50)
         }
         this.setState(({ data }) => {
@@ -44,19 +47,68 @@ class App extends Component {
     }
 
 
+    onToggleProp = (id, prop) => {
+        this.setState(({ data }) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return { ...item, [prop]: !item[prop] }
+                }
+                return item;
+            })
+        }))
+    }
+
+    searchEmp = (items, term) => {
+        if (term.length === 0){
+            return items;
+        }
+
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1 // метод indexOf поверне індекс елемента який передали в аргумент для пошуку
+        })  
+    }
+ 
+    onUpdateSearch = (term) => {
+        this.setState({term});
+    }
+    
+    filterPost = (items, filter) => {
+        switch (filter) {
+            case 'rise':
+                return items.filter(item => item.rise); 
+            case 'salaryMore1000':
+                return items.filter(item => item.salary > 1000); 
+            default:
+                return items 
+        }
+    }
+
+    onFilterSelect = (filter) => {
+        this.setState({filter});
+    }
+    
+
     render() {
+        const {data, term, filter} = this.state
+        const employees = this.state.data.length;
+        const increased = this.state.data.filter(item => item.increase).length;
+        const visibleData = this.filterPost(this.searchEmp(data, term), filter)
         return (
             <div className="app" >
-                <AppInfo /> 
+                <AppInfo 
+                    employees={employees}
+                    increased={increased}
+                    /> 
                 
                 <div className="search-panel">
-                    <SearchPanel />
-                    <AppFilter />
-                </div>
+                    <SearchPanel onUpdateSearch={this.onUpdateSearch} />
+                    <AppFilter filter={filter} onFilterSelect={this.onFilterSelect}/>
+                </div> 
 
                 <EmployeesList
-                    data={this.state.data}
-                    onDelete={this.deleteItem} />
+                    data={visibleData}
+                    onDelete={this.deleteItem} 
+                    onToggleProp={this.onToggleProp}  />
                 <EmployeesAddForm 
                     onAdd={this.addItem} />
             </div>
@@ -66,3 +118,46 @@ class App extends Component {
 
 
 export default App;
+
+
+    // onToggleIncrease = (id) => {
+    //     this.setState(({data}) => ({
+    //         data: data.map(item => {
+    //             if (item.id === id){
+    //                 return { ...item, increase: !item.increase }
+    //             }
+    //             return item;
+    //         })
+    //      }))
+    // }
+
+    // onToggleRise = (id) => {
+    //     this.setState(({ data }) => ({
+    //         data: data.map(item => {
+    //             if (item.id === id) {
+    //                 return { ...item, rise: !item.rise }
+    //             }
+    //             return item;
+    //         })
+    //     }))
+    // }
+
+    
+     // 1)
+            // const index  = data.findIndex(elem => elem.id === id);
+            // const old = data[index];
+            // const newItem = {...old, increase: !old.increase};
+            // const newArr = [...data.slice(0,index), newItem, ...data.slice(index+1)];
+
+            // return {
+            //     data: newArr
+            // }
+    // 2) 
+            // this.setState(({ data }) => ({
+            //     data: data.map(item => {
+            //         if (item.id === id) {
+            //             return { ...item, increase: !item.increase }
+            //         }
+            //         return item;
+            //     })
+            // }))

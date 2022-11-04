@@ -1,31 +1,31 @@
 import './employees-add-form.css'
 import { Component } from 'react';
 
-class EmployeesAddForm extends Component { 
+class EmployeesAddForm extends Component {
 
     state = {
         name: '',
         salary: ''
     }
 
-    onValueChange = (e) => { 
+    onValueChange = (e) => {
         this.setState({
-            [e.target.name] : e.target.value
+            [e.target.name]: e.target.value
         })
     }
-    
+
     onSubmit = (e) => {
         e.preventDefault();
-        console.log(this.props);
+        if (this.state.name.length < 3 || !this.state.salary) return;
         this.props.onAdd(this.state.name, this.state.salary);
         this.setState({
             name: '',
             salary: ''
-        })
+        }) 
     }
-     
+
     render() {
-        const {name, salary} = this.state; 
+        const { name, salary } = this.state;
         return (
             <div className="app-add-form">
                 <h3>Додайте нового працівника</h3>
@@ -36,14 +36,14 @@ class EmployeesAddForm extends Component {
                         className="form-control new-post-label"
                         placeholder="Ім'я працівника?"
                         name="name"
-                        value={name} 
-                        onChange={this.onValueChange}/>
+                        value={name}
+                        onChange={this.onValueChange} />
                     <input type="number"
                         className="form-control new-post-label"
                         placeholder="ЗП в $?"
                         name="salary"
-                        value={salary} 
-                        onChange={this.onValueChange}/>
+                        value={salary}
+                        onChange={this.onValueChange} />
                     <button type="submit"
                         className="btn btn-outline-light" >Додати</button>
                 </form>
@@ -52,6 +52,6 @@ class EmployeesAddForm extends Component {
     }
 }
 
- 
+
 
 export default EmployeesAddForm;
